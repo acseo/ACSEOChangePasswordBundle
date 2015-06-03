@@ -50,13 +50,14 @@ $ app/console doctrine:schema:update --force
 *From now Password History is set up. The table password_history will store the changed user password whenever this password is changed*
 
 5) Enable Password history constraint
-````
+```
 # src/YourBundle/Resources/config/validation.yml
 YourBundle\Entity\YourUser:
     properties:
         # ...
         plainPassword:
             - ACSEO\ChangePasswordBundle\Validator\Constraints\NotInPreviousPasswords: ~
+```
 
 *And that's it !*
 
