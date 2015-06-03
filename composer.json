@@ -1,0 +1,26 @@
+{
+    "name": "acseo/change-password-bundle",
+    "type": "symfony-bundle",
+    "description": "Bundle used to manage User password history and user change password policy",
+    "keywords": ["Symfony", "User", "Password", "OWASP"],
+    "homepage": "https://github.com/acseo/ACSEOChangePasswordBundle",
+    "authors": [
+        {
+            "name": "Nicolas Potier",
+            "email": "Nicolas.Potier@acseo-conseil.fr"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "symfony/symfony" : ">=2.0.0",
+        "friendsofsymfony/user-bundle" : ">=2.0.0"
+    },
+    "suggest": {
+
+    },
+    "autoload": {
+        "psr-0": { "ACSEO\\ChangePasswordBundle": "" }
+    },
+    "target-dir": "ACSEO/ChangePasswordBundle",
+    "minimum-stability": "dev"
+}

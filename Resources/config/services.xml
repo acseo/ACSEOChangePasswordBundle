@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    
+    <parameters>
+        <parameter key="acseo_change_password.listener.class">ACSEO\ChangePasswordBundle\Listener\ChangePasswordListener</parameter>
+        <parameter key="acseo_change_password.validator.notinpreviouspassword.class">ACSEO\ChangePasswordBundle\Validator\Constraints\NotInPreviousPasswordsValidator</parameter>
+    </parameters>
+
+    <services>
+        <service id="acseo_change_password.listener" class="%acseo_change_password.listener.class%">
+            <tag name="kernel.event_subscriber" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="security.context" />
+            <argument type="service" id="router" />
+        </service>
+
+        <service id="acseo.validator.notinpreviouspasswords" class="%acseo_change_password.validator.notinpreviouspassword.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="security.context" />
+            <argument type="service" id="security.encoder_factory" />
+            <tag name="validator.constraint_validator" alias="acseo.validator.notinpreviouspasswords" />
+        </service>
+ 
+    </services>
+</container>
