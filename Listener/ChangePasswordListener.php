@@ -29,7 +29,8 @@ class ChangePasswordListener implements EventSubscriberInterface
     {
         return array (FOSUserEvents::CHANGE_PASSWORD_COMPLETED => 'onChangePasswordCompleted',
                       FOSUserEvents::REGISTRATION_COMPLETED    => 'onChangePasswordCompleted',
-                      KernelEvents::REQUEST               => 'onKernelRequest',
+                      FOSUserEvents::RESETTING_RESET_SUCCESS   => 'onChangePasswordCompleted',
+                      KernelEvents::REQUEST                    => 'onKernelRequest',
         );
     }
 
