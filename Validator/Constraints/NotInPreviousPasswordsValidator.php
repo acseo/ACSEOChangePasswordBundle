@@ -4,9 +4,10 @@ namespace ACSEO\ChangePasswordBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Doctrine\ORM\EntityManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Routing\Router;
+use Doctrine\ORM\EntityManager;
 
 class NotInPreviousPasswordsValidator extends ConstraintValidator
 {
