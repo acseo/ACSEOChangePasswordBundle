@@ -16,7 +16,7 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="security.context" />
             <argument type="service" id="router" />
-            <argument>%passwordexpireafter%</argument>
+            <argument>%acseo_change_password.validator.passwordexpireafter%</argument>
         </service>
 
         <service id="acseo.validator.notinpreviouspasswords" class="%acseo_change_password.validator.notinpreviouspassword.class%">
