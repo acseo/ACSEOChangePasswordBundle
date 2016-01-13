@@ -3,10 +3,11 @@
 <container xmlns="http://symfony.com/schema/dic/services"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
-    
+
     <parameters>
         <parameter key="acseo_change_password.listener.class">ACSEO\ChangePasswordBundle\Listener\ChangePasswordListener</parameter>
         <parameter key="acseo_change_password.validator.notinpreviouspassword.class">ACSEO\ChangePasswordBundle\Validator\Constraints\NotInPreviousPasswordsValidator</parameter>
+        <parameter key="acseo_change_password.validator.passwordexpireafter">P30D</parameter>
     </parameters>
 
     <services>
@@ -15,6 +16,7 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="security.context" />
             <argument type="service" id="router" />
+            <argument>%passwordexpireafter%</argument>
         </service>
 
         <service id="acseo.validator.notinpreviouspasswords" class="%acseo_change_password.validator.notinpreviouspassword.class%">
@@ -25,6 +27,6 @@
             <argument type="service" id="fos_user.user_manager"/>
             <tag name="validator.constraint_validator" alias="acseo.validator.notinpreviouspasswords" />
         </service>
- 
+
     </services>
 </container>
