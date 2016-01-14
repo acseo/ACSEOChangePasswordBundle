@@ -60,7 +60,13 @@ class ChangePasswordListener implements EventSubscriberInterface
             return;
         }
 
-        $user = $this->security->getToken()->getUser();
+        $token = $this->security->getToken();
+
+        if (!$token) {
+            return;
+        }
+
+        $user = $token->getUser();
 
         if (!$user) {
             return;
