@@ -12,32 +12,33 @@ use Symfony\Component\Routing\Router;
 use Doctrine\ORM\EntityManager;
 
 class LoginSuccessHandler extends DefaultAuthenticationSuccessHandler
-{   
+{
     protected $router;
     protected $security;
+    protected $passwordExpireAfter;
 
-    public function __construct(HttpUtils $httpUtils, EntityManager $em, Router $router, SecurityContext $security)
+    public function __construct(HttpUtils $httpUtils, EntityManager $em, Router $router, SecurityContext $security, $passwordExpireAfter)
     {
         $this->httpUtils = $httpUtils;
         $this->em        = $em;
         $this->router    = $router;
         $this->security  = $security;
+        $this->passwordExpireAfter = $passwordExpireAfter;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
-    {  
+    {
         $lastUserPassword = $this->em->getRepository("ACSEOChangePasswordBundle:PasswordHistory")
-                                ->findOneBy(array("user" => $token->getUser()), array("createdAt" => "DESC"),1); 
+            ->findOneBy(array("user" => $token->getUser()), array("createdAt" => "DESC"), 1);
 
         $lastPasswordDate = $lastUserPassword->getCreatedAt();
 
-        if ($lastPasswordDate->add(new \DateInterval('P30D')) > new \Datetime()) {
+        if ($lastPasswordDate->add(new \DateInterval($this->passwordExpireAfter)) > new \Datetime()) {
             $session = $request->getSession();
             $session->set("mustchangepassword", true);
             $response = new RedirectResponse($this->router->generate('fos_user_change_password'));
         }
 
         return parent::onAuthenticationSuccess($request, $token);
-    } 
+    }
 }
-

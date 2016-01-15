@@ -25,6 +25,7 @@
             <argument type="service" id="security.encoder_factory" />
             <argument type="service" id="request_stack"/>
             <argument type="service" id="fos_user.user_manager"/>
+            <argument>%acseo_change_password.validator.passwordexpireafter%</argument>
             <tag name="validator.constraint_validator" alias="acseo.validator.notinpreviouspasswords" />
         </service>
 
