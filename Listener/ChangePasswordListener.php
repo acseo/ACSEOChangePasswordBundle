@@ -24,6 +24,7 @@ class ChangePasswordListener implements EventSubscriberInterface
         $this->security = $security;
         $this->router = $router;
         $this->passwordExpireAfter = $passwordExpireAfter;
+        $this->changePasswordRoute = $changePasswordRoute;
     }
 
     public static function getSubscribedEvents()
@@ -56,7 +57,7 @@ class ChangePasswordListener implements EventSubscriberInterface
             return;
         }
 
-        if ($event->getRequest()->get("_route") == "fos_user_change_password" || substr($event->getRequest()->get("_route"), 0, 8) == "_assetic") {
+        if ($event->getRequest()->get("_route") == $this->changePasswordRoute || substr($event->getRequest()->get("_route"), 0, 8) == "_assetic") {
             return;
         }
 
@@ -81,7 +82,7 @@ class ChangePasswordListener implements EventSubscriberInterface
         $lastPasswordDate = $lastUserPassword->getCreatedAt();
 
         if ($lastPasswordDate->add(new \DateInterval($this->passwordExpireAfter)) < new \Datetime()) {
-            $response = new RedirectResponse($this->router->generate('fos_user_change_password'));
+            $response = new RedirectResponse($this->router->generate($this->changePasswordRoute));
             $event->setResponse($response);
         }
 
