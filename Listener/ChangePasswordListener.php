@@ -18,7 +18,7 @@ use ACSEO\ChangePasswordBundle\Entity\PasswordHistory;
 class ChangePasswordListener implements EventSubscriberInterface
 {
 
-    public function __construct(EntityManager $em, SecurityContext $security, Router $router, $passwordExpireAfter)
+    public function __construct(EntityManager $em, SecurityContext $security, Router $router, $passwordExpireAfter, $changePasswordRoute)
     {
         $this->em = $em;
         $this->security = $security;
