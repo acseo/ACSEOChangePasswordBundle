@@ -17,8 +17,9 @@ class LoginSuccessHandler extends DefaultAuthenticationSuccessHandler
     protected $security;
     protected $passwordExpireAfter;
     protected $changePasswordRoute;
+    protected $enable_flashbag_message;
 
-    public function __construct(HttpUtils $httpUtils, EntityManager $em, Router $router, SecurityContext $security, $passwordExpireAfter, $changePasswordRoute)
+    public function __construct(HttpUtils $httpUtils, EntityManager $em, Router $router, SecurityContext $security, $passwordExpireAfter, $changePasswordRoute, $enable_flashbag_message)
     {
         $this->httpUtils = $httpUtils;
         $this->em        = $em;
@@ -26,6 +27,7 @@ class LoginSuccessHandler extends DefaultAuthenticationSuccessHandler
         $this->security  = $security;
         $this->passwordExpireAfter = $passwordExpireAfter;
         $this->changePasswordRoute = $changePasswordRoute;
+        $this->enable_flashbag_message = $enable_flashbag_message;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
@@ -38,6 +40,9 @@ class LoginSuccessHandler extends DefaultAuthenticationSuccessHandler
         if ($lastPasswordDate->add(new \DateInterval($this->passwordExpireAfter)) > new \Datetime()) {
             $session = $request->getSession();
             $session->set("mustchangepassword", true);
+            if ($this->enable_flashbag_message) {
+                $session->getFlashBag()->add("danger", "Votre mot de passe a expiré, vous devez en saisir un nouveau");
+            }
             $response = new RedirectResponse($this->router->generate($this->changePasswordRoute));
         }
 
