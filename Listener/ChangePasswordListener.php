@@ -18,13 +18,14 @@ use ACSEO\ChangePasswordBundle\Entity\PasswordHistory;
 class ChangePasswordListener implements EventSubscriberInterface
 {
 
-    public function __construct(EntityManager $em, SecurityContext $security, Router $router, $passwordExpireAfter, $changePasswordRoute)
+    public function __construct(EntityManager $em, SecurityContext $security, Router $router, $passwordExpireAfter, $changePasswordRoute, $enable_flashbag_message)
     {
         $this->em = $em;
         $this->security = $security;
         $this->router = $router;
         $this->passwordExpireAfter = $passwordExpireAfter;
         $this->changePasswordRoute = $changePasswordRoute;
+        $this->enable_flashbag_message = $enable_flashbag_message;
     }
 
     public static function getSubscribedEvents()
@@ -82,6 +83,9 @@ class ChangePasswordListener implements EventSubscriberInterface
         $lastPasswordDate = $lastUserPassword->getCreatedAt();
 
         if ($lastPasswordDate->add(new \DateInterval($this->passwordExpireAfter)) < new \Datetime()) {
+            if ($this->enable_flashbag_message) {
+                $event->getRequest()->getSession()->getFlashBag()->add("danger", "Votre mot de passe a expiré, vous devez en saisir un nouveau");
+            }
             $response = new RedirectResponse($this->router->generate($this->changePasswordRoute));
             $event->setResponse($response);
         }
