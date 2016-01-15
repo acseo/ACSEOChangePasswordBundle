@@ -8,6 +8,7 @@
         <parameter key="acseo_change_password.listener.class">ACSEO\ChangePasswordBundle\Listener\ChangePasswordListener</parameter>
         <parameter key="acseo_change_password.validator.notinpreviouspassword.class">ACSEO\ChangePasswordBundle\Validator\Constraints\NotInPreviousPasswordsValidator</parameter>
         <parameter key="acseo_change_password.validator.passwordexpireafter">P30D</parameter>
+        <parameter key="acseo_change_password.change_password_route">fos_user_change_password</parameter>
     </parameters>
 
     <services>
@@ -17,6 +18,7 @@
             <argument type="service" id="security.context" />
             <argument type="service" id="router" />
             <argument>%acseo_change_password.validator.passwordexpireafter%</argument>
+            <argument>%acseo_change_password.change_password_route%</argument>
         </service>
 
         <service id="acseo.validator.notinpreviouspasswords" class="%acseo_change_password.validator.notinpreviouspassword.class%">
@@ -26,6 +28,7 @@
             <argument type="service" id="request_stack"/>
             <argument type="service" id="fos_user.user_manager"/>
             <argument>%acseo_change_password.validator.passwordexpireafter%</argument>
+            <argument>%acseo_change_password.change_password_route%</argument>
             <tag name="validator.constraint_validator" alias="acseo.validator.notinpreviouspasswords" />
         </service>
 

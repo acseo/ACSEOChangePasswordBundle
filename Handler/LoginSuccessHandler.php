@@ -16,14 +16,16 @@ class LoginSuccessHandler extends DefaultAuthenticationSuccessHandler
     protected $router;
     protected $security;
     protected $passwordExpireAfter;
+    protected $changePasswordRoute;
 
-    public function __construct(HttpUtils $httpUtils, EntityManager $em, Router $router, SecurityContext $security, $passwordExpireAfter)
+    public function __construct(HttpUtils $httpUtils, EntityManager $em, Router $router, SecurityContext $security, $passwordExpireAfter, $changePasswordRoute)
     {
         $this->httpUtils = $httpUtils;
         $this->em        = $em;
         $this->router    = $router;
         $this->security  = $security;
         $this->passwordExpireAfter = $passwordExpireAfter;
+        $this->changePasswordRoute = $changePasswordRoute;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
@@ -36,7 +38,7 @@ class LoginSuccessHandler extends DefaultAuthenticationSuccessHandler
         if ($lastPasswordDate->add(new \DateInterval($this->passwordExpireAfter)) > new \Datetime()) {
             $session = $request->getSession();
             $session->set("mustchangepassword", true);
-            $response = new RedirectResponse($this->router->generate('fos_user_change_password'));
+            $response = new RedirectResponse($this->router->generate($this->changePasswordRoute));
         }
 
         return parent::onAuthenticationSuccess($request, $token);
