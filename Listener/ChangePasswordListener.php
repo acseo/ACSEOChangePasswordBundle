@@ -18,7 +18,7 @@ use ACSEO\ChangePasswordBundle\Entity\PasswordHistory;
 class ChangePasswordListener implements EventSubscriberInterface
 {
 
-    public function __construct(EntityManager $em, SecurityContext $security, Router $router, $passwordExpireAfter, $changePasswordRoute, $enableFlashbagMessage)
+    public function __construct(EntityManager $em, SecurityContext $security, Router $router, $passwordExpireAfter, $changePasswordRoute, $enableFlashbagMessage, $avoidRole)
     {
         $this->em = $em;
         $this->security = $security;
@@ -26,6 +26,7 @@ class ChangePasswordListener implements EventSubscriberInterface
         $this->passwordExpireAfter = $passwordExpireAfter;
         $this->changePasswordRoute = $changePasswordRoute;
         $this->enableFlashbagMessage = $enableFlashbagMessage;
+        $this->avoidRole = $avoidRole;
     }
 
     public static function getSubscribedEvents()
@@ -68,6 +69,10 @@ class ChangePasswordListener implements EventSubscriberInterface
             return;
         }
 
+        if ("" != $this->avoidRole && $this->security->isGranted($this->avoidRole)) {
+            return;
+        }
+
         $user = $token->getUser();
 
         if (!$user) {
@@ -89,7 +94,5 @@ class ChangePasswordListener implements EventSubscriberInterface
             $response = new RedirectResponse($this->router->generate($this->changePasswordRoute));
             $event->setResponse($response);
         }
-
-
     }
 }
