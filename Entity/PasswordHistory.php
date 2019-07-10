@@ -5,7 +5,7 @@ namespace ACSEO\ChangePasswordBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * PasswordHistory
+ * PasswordHistory.
  *
  * @ORM\Table(name="password_history")
  * @ORM\Entity
@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PasswordHistory
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -33,7 +33,6 @@ class PasswordHistory
      */
     private $user;
 
-
     /**
      * @var string
      *
@@ -42,21 +41,21 @@ class PasswordHistory
     private $password;
 
     /**
-     * @var string
+     * @var string|null
      *
-     * @ORM\Column(name="salt", type="string", length=255)
+     * @ORM\Column(name="salt", type="string", length=255, nullable=true)
      */
     private $salt;
 
-
-    public function __construct() {
+    public function __construct()
+    {
         $this->createdAt = new \Datetime();
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -64,7 +63,7 @@ class PasswordHistory
     }
 
     /**
-     * Set createdAt
+     * Set createdAt.
      *
      * @param \DateTime $createdAt
      *
@@ -78,7 +77,7 @@ class PasswordHistory
     }
 
     /**
-     * Get createdAt
+     * Get createdAt.
      *
      * @return \DateTime
      */
@@ -88,9 +87,9 @@ class PasswordHistory
     }
 
     /**
-     * Set user
+     * Set user.
      *
-     * @param Object $user
+     * @param object $user
      *
      * @return PasswordHistory
      */
@@ -102,9 +101,9 @@ class PasswordHistory
     }
 
     /**
-     * Get user
+     * Get user.
      *
-     * @return integer
+     * @return int
      */
     public function getUser()
     {
@@ -112,7 +111,7 @@ class PasswordHistory
     }
 
     /**
-     * Set password
+     * Set password.
      *
      * @param string $password
      *
@@ -126,7 +125,7 @@ class PasswordHistory
     }
 
     /**
-     * Get password
+     * Get password.
      *
      * @return string
      */
@@ -136,13 +135,13 @@ class PasswordHistory
     }
 
     /**
-     * Set salt
+     * Set salt.
      *
-     * @param string $salt
+     * @param string|null $salt
      *
      * @return PasswordHistory
      */
-    public function setSalt($salt)
+    public function setSalt($salt = null)
     {
         $this->salt = $salt;
 
@@ -150,13 +149,12 @@ class PasswordHistory
     }
 
     /**
-     * Get salt
+     * Get salt.
      *
-     * @return string
+     * @return string|null
      */
     public function getSalt()
     {
         return $this->salt;
     }
 }
-

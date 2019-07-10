@@ -7,7 +7,7 @@
     <parameters>
         <parameter key="acseo_change_password.listener.class">ACSEO\ChangePasswordBundle\Listener\ChangePasswordListener</parameter>
         <parameter key="acseo_change_password.validator.notinpreviouspassword.class">ACSEO\ChangePasswordBundle\Validator\Constraints\NotInPreviousPasswordsValidator</parameter>
-        <parameter key="acseo_change_password.validator.passwordexpireafter">P30D</parameter>
+        <parameter key="acseo_change_password.validator.passwordexpireafter">P100D</parameter>
         <parameter key="acseo_change_password.change_password_route">fos_user_change_password</parameter>
         <parameter key="acseo_change_password.enable_flashbag_message">false</parameter>
         <parameter key="acseo_change_password.avoid_role"></parameter>
@@ -17,7 +17,8 @@
         <service id="acseo_change_password.listener" class="%acseo_change_password.listener.class%">
             <tag name="kernel.event_subscriber" />
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument type="service" id="security.context" />
+            <argument type="service" id="security.token_storage" />
+            <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="router" />
             <argument>%acseo_change_password.validator.passwordexpireafter%</argument>
             <argument>%acseo_change_password.change_password_route%</argument>
@@ -27,8 +28,7 @@
 
         <service id="acseo.validator.notinpreviouspasswords" class="%acseo_change_password.validator.notinpreviouspassword.class%">
             <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument type="service" id="security.context" />
-            <argument type="service" id="security.encoder_factory" />
+            <argument type="service" id="security.token_storage" />
             <argument type="service" id="request_stack"/>
             <argument type="service" id="fos_user.user_manager"/>
             <argument>%acseo_change_password.validator.passwordexpireafter%</argument>
