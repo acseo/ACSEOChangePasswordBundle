@@ -2,26 +2,26 @@
 
 namespace ACSEO\ChangePasswordBundle\Listener;
 
+use ACSEO\ChangePasswordBundle\Entity\PasswordHistory;
+use Doctrine\ORM\EntityManager;
+use FOS\UserBundle\Event\FilterUserResponseEvent;
+use FOS\UserBundle\FOSUserEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\HttpKernel;
-use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Routing\Router;
-use FOS\UserBundle\FOSUserEvents;
-use FOS\UserBundle\Event\FilterUserResponseEvent;
-use FOS\UserBundle\Model\UserInterface;
-use Doctrine\ORM\EntityManager;
-use ACSEO\ChangePasswordBundle\Entity\PasswordHistory;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ChangePasswordListener implements EventSubscriberInterface
 {
-
-    public function __construct(EntityManager $em, SecurityContext $security, Router $router, $passwordExpireAfter, $changePasswordRoute, $enableFlashbagMessage, $avoidRole)
+    public function __construct(EntityManager $em, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authorizationChecker, Router $router, $passwordExpireAfter, $changePasswordRoute, $enableFlashbagMessage, $avoidRole)
     {
         $this->em = $em;
-        $this->security = $security;
+        $this->tokenStorage = $tokenStorage;
+        $this->authorizationChecker = $authorizationChecker;
         $this->router = $router;
         $this->passwordExpireAfter = $passwordExpireAfter;
         $this->changePasswordRoute = $changePasswordRoute;
@@ -31,10 +31,10 @@ class ChangePasswordListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array (FOSUserEvents::CHANGE_PASSWORD_COMPLETED => 'onChangePasswordCompleted',
-                      FOSUserEvents::REGISTRATION_COMPLETED    => 'onChangePasswordCompleted',
-                      FOSUserEvents::RESETTING_RESET_COMPLETED   => 'onChangePasswordCompleted',
-                      KernelEvents::REQUEST                    => 'onKernelRequest',
+        return array(FOSUserEvents::CHANGE_PASSWORD_COMPLETED => 'onChangePasswordCompleted',
+                      FOSUserEvents::REGISTRATION_COMPLETED => 'onChangePasswordCompleted',
+                      FOSUserEvents::RESETTING_RESET_COMPLETED => 'onChangePasswordCompleted',
+                      KernelEvents::REQUEST => 'onKernelRequest',
         );
     }
 
@@ -59,17 +59,17 @@ class ChangePasswordListener implements EventSubscriberInterface
             return;
         }
 
-        if ($event->getRequest()->get("_route") == $this->changePasswordRoute || substr($event->getRequest()->get("_route"), 0, 8) == "_assetic") {
+        if ($event->getRequest()->get('_route') == $this->changePasswordRoute || '_assetic' == substr($event->getRequest()->get('_route'), 0, 8)) {
             return;
         }
 
-        $token = $this->security->getToken();
+        $token = $this->tokenStorage->getToken();
 
         if (!$token) {
             return;
         }
 
-        if ("" != $this->avoidRole && $this->security->isGranted($this->avoidRole)) {
+        if ('' != $this->avoidRole && $this->authorizationChecker->isGranted($this->avoidRole)) {
             return;
         }
 
@@ -79,7 +79,7 @@ class ChangePasswordListener implements EventSubscriberInterface
             return;
         }
 
-        $lastUserPassword = $this->em->getRepository("ACSEOChangePasswordBundle:PasswordHistory")->findOneBy(array("user" =>$user), array("createdAt" => "DESC"), 1);
+        $lastUserPassword = $this->em->getRepository('ACSEOChangePasswordBundle:PasswordHistory')->findOneBy(array('user' => $user), array('createdAt' => 'DESC'), 1);
 
         if (!$lastUserPassword) {
             return;
@@ -89,7 +89,7 @@ class ChangePasswordListener implements EventSubscriberInterface
 
         if ($lastPasswordDate->add(new \DateInterval($this->passwordExpireAfter)) < new \Datetime()) {
             if ($this->enableFlashbagMessage) {
-                $event->getRequest()->getSession()->getFlashBag()->add("danger", "Votre mot de passe a expiré, vous devez en saisir un nouveau");
+                $event->getRequest()->getSession()->getFlashBag()->add('danger', 'Votre mot de passe a expiré, vous devez en saisir un nouveau');
             }
             $response = new RedirectResponse($this->router->generate($this->changePasswordRoute));
             $event->setResponse($response);
