@@ -22,7 +22,9 @@ class NotInPreviousPasswordsValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         $request = $this->requestStack->getCurrentRequest();
-        if (null != $request->get('token', null)) {
+        if (null != $request->get('email', null)) {
+            $user = $this->fosUserManager->findUserByEmail($request->get('email'));
+        } elseif (null != $request->get('token', null)) {
             $user = $this->fosUserManager->findUserByConfirmationToken($request->get('token'));
         } else {
             $token = $this->tokenStorage->getToken();
